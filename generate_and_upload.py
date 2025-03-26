@@ -14,7 +14,7 @@ def generate_slogans():
     prompt = "Generate 5 unique and creative tech slogans."
 
     response = client.chat.completions.create(
-        model="gpt-4",  # Or "gpt-3.5-turbo"
+        model="gpt-3.5-turbo",  # Or "gpt-3.5-turbo"
         messages=[{"role": "user", "content": prompt}],
         max_tokens=100
     )
