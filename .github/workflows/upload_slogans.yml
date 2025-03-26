@@ -1,29 +1,27 @@
-name: Generate and Upload Tech Slogans
+name: Upload Tech Slogans to GitHub
 
 on:
   schedule:
     - cron: '0 0 * * *'  # Runs daily at midnight UTC
-
   workflow_dispatch:  # Allows manual triggering
 
 jobs:
-  run-script:
+  upload-slogans:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set Up Python
-        uses: actions/setup-python@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.9"
+          python-version: '3.9'
 
       - name: Install Dependencies
-        run: pip install openai requests
+        run: pip install -r requirements.txt
 
-      - name: Run Python Script
+      - name: Run Script
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: python generate_and_upload.py
