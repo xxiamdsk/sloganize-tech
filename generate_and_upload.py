@@ -14,17 +14,18 @@ FILENAME = "tech_slogans.txt"
 
 
 def generate_slogans():
+    openai.api_key = OPENAI_API_KEY
     prompt = "Generate 5 unique and creative tech slogans."
     
-    openai.api_key = OPENAI_API_KEY
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
+    response = openai.ChatCompletion.create(
+        model="gpt-4",  # Or "gpt-3.5-turbo" if you prefer
+        messages=[{"role": "user", "content": prompt}],
         max_tokens=100
     )
 
-    slogans = response.choices[0].text.strip()
+    slogans = response['choices'][0]['message']['content'].strip()
     return slogans
+
 
 
 def create_file_with_slogans():
