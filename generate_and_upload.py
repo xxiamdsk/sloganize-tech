@@ -1,25 +1,20 @@
-import openai
 import os
-import requests
+from openai import OpenAI
 from datetime import datetime
-import base64
+import requests
 
-# Load environment variables
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-REPO_OWNER = "xxiamdsk"
-REPO_NAME = "sloganize-tech"
-BRANCH = "main"
-FILENAME = "tech_slogans.txt"
-
+GITHUB_TOKEN = os.getenv("MY_GITHUB_TOKEN")
+REPO_NAME = "DeepakSinghKushwaha/sloganize-tech"  # Replace with your repo
 
 def generate_slogans():
-    openai.api_key = os.getenv("OPENAI_API_KEY")
-
+    """Generate tech slogans using OpenAI API."""
+    client = OpenAI(api_key=OPENAI_API_KEY)
+    
     prompt = "Generate 5 unique and creative tech slogans."
 
-    response = openai.Client().chat.completions.create(
-        model="gpt-4",  # Or "gpt-3.5-turbo" if needed
+    response = client.chat.completions.create(
+        model="gpt-4",  # Or "gpt-3.5-turbo"
         messages=[{"role": "user", "content": prompt}],
         max_tokens=100
     )
@@ -27,54 +22,41 @@ def generate_slogans():
     slogans = response.choices[0].message.content.strip()
     return slogans
 
-
-
-
-
 def create_file_with_slogans():
+    """Create a text file with generated slogans."""
     slogans = generate_slogans()
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    content = f"Tech Slogans ({timestamp})\n\n{slogans}"
+    filename = f"slogans_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt"
     
-    with open(FILENAME, "w", encoding="utf-8") as file:
-        file.write(content)
+    with open(filename, "w") as f:
+        f.write(slogans)
     
-    return content
-
+    return filename
 
 def upload_to_github():
-    content = create_file_with_slogans()
+    """Upload the file to GitHub."""
+    filename = create_file_with_slogans()
     
-    url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/contents/{FILENAME}"
+    with open(filename, "rb") as f:
+        content = f.read().decode("utf-8")
     
+    url = f"https://api.github.com/repos/{REPO_NAME}/contents/{filename}"
     headers = {
-        "Authorization": f"token {GITHUB_TOKEN}",
+        "Authorization": f"Bearer {GITHUB_TOKEN}",
         "Accept": "application/vnd.github.v3+json"
     }
-    
-    # Check if the file exists in the repo
-    response = requests.get(url, headers=headers)
-    sha = response.json().get("sha", "")
-
-    # Encode content to base64 for GitHub API
-    encoded_content = base64.b64encode(content.encode()).decode()
 
     data = {
-        "message": "Update tech slogans",
-        "content": encoded_content,
-        "branch": BRANCH,
+        "message": f"Add new slogans file {filename}",
+        "content": content.encode("utf-8").decode("utf-8")
     }
-
-    if sha:
-        data["sha"] = sha  # Required for updating existing files
 
     response = requests.put(url, json=data, headers=headers)
     
-    if response.status_code in [200, 201]:
-        print("✅ File uploaded successfully!")
+    if response.status_code == 201:
+        print(f"File {filename} uploaded successfully!")
     else:
-        print(f"❌ Failed to upload file: {response.text}")
-
+        print(f"Failed to upload file. Status code: {response.status_code}")
+        print(response.json())
 
 if __name__ == "__main__":
     upload_to_github()
