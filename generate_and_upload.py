@@ -1,4 +1,4 @@
-from openai import OpenAI
+import openai
 import os
 import requests
 from datetime import datetime
@@ -14,18 +14,19 @@ FILENAME = "tech_slogans.txt"
 
 
 def generate_slogans():
-    client = OpenAI(api_key=OPENAI_API_KEY)
-    
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+
     prompt = "Generate 5 unique and creative tech slogans."
-    
-    response = client.chat.completions.create(
+
+    response = openai.Client().chat.completions.create(
         model="gpt-4",  # Or "gpt-3.5-turbo" if needed
         messages=[{"role": "user", "content": prompt}],
         max_tokens=100
     )
-    
+
     slogans = response.choices[0].message.content.strip()
     return slogans
+
 
 
 
