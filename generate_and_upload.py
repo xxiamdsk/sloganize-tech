@@ -5,7 +5,7 @@ import requests
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GITHUB_TOKEN = os.getenv("MY_GITHUB_TOKEN")
-REPO_NAME = "DeepakSinghKushwaha/sloganize-tech"  # Replace with your repo
+REPO_NAME = "xxiamdsk/sloganize-tech"  # Replace with your repo
 
 def generate_slogans():
     """Generate tech slogans using OpenAI API."""
