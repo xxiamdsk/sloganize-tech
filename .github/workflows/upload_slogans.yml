@@ -1,27 +1,27 @@
-name: Upload Tech Slogans to GitHub
+# name: Upload Tech Slogans to GitHub
 
-on:
-  schedule:
-    - cron: '0 0 * * *'  # Runs daily at midnight UTC
-  workflow_dispatch:  # Allows manual triggering
+# on:
+#   schedule:
+#     - cron: '0 0 * * *'  # Runs daily at midnight UTC
+#   workflow_dispatch:  # Allows manual triggering
 
-jobs:
-  upload-slogans:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+# jobs:
+#   upload-slogans:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'
+#       - name: Set up Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: '3.9'
 
-      - name: Install Dependencies
-        run: pip install -r requirements.txt
+#       - name: Install Dependencies
+#         run: pip install -r requirements.txt
 
-      - name: Run Script
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        run: python generate_and_upload.py
+#       - name: Run Script
+#         env:
+#           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+#           MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+#         run: python generate_and_upload.py
